@@ -1,0 +1,47 @@
+name: Selenium WebDriver CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    - name: Install dependencies
+      run: dotnet restore SeleniumBasicExercise.sln
+    - name: Build
+      run: dotnet build SeleniumBasicExercise.sln --no-restore
+    - name: Run TestProject1 tests
+      env:
+        CHROMEWEBDRIVER: /usr/bin/google-chrome
+      run: | 
+        echo "Running TestProject1 test"
+        dotnet test TestProject1/TestProject1.csproj --verbosity normal
+
+    - name: Run TestProject2 tests
+      env:
+        CHROMEWEBDRIVER: /usr/bin/google-chrome
+      run: | 
+        echo "Running TestProject2 test"
+        dotnet test TestProject1/TestProject2.csproj --verbosity normal
+
+    - name: Run TestProject3 tests
+      env:
+        CHROMEWEBDRIVER: /usr/bin/google-chrome
+      run: | 
+        echo "Running TestProject3 test"
+        dotnet test TestProject1/TestProject3.csproj --verbosity normal
